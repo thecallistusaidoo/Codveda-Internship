@@ -1,21 +1,24 @@
+const express = require("express");
 const mongoose = require("mongoose");
-const User = require("./Models/user");
+const userRoutes = require("./Routes/userRoutes");
+
+const app = express();
+const PORT = 3000;
+
+// Middleware to read JSON
+app.use(express.json());
 
 mongoose.connect("mongodb://127.0.0.1:27017/CodvedaDB")
-  .then(async () => {
-    console.log("MongoDB Connected");
+  .then(() => console.log("MongoDB Connected"))
+  .catch(err => console.error(err));
 
-    const newUser = new User({
-      name: "Codveda Intern",
-      email: "intern@codveda.com",
-      role: "Full-Stack Intern"
-    });
+app.get("/", (req, res) => {
+  res.send("Codveda Backend is running");
+});
 
-    await newUser.save();
-    console.log("User saved successfully");
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
 
-    mongoose.connection.close();
-  })
-  .catch(err => {
-    console.error("MongoDB connection error:", err);
-  });
+//Using routes
+app.use("/api", userRoutes);
