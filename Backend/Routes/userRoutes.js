@@ -1,10 +1,9 @@
 const express = require("express");
 const User = require("../Models/user");
-
 const router = express.Router();
 
 // CREATE user
-router.post("/users", async (req, res) => {
+router.post("/", async (req, res) => {
   try {
     const user = new User(req.body);
     await user.save();
@@ -15,7 +14,7 @@ router.post("/users", async (req, res) => {
 });
 
 // READ users
-router.get("/users", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const users = await User.find();
     res.json(users);
@@ -24,24 +23,23 @@ router.get("/users", async (req, res) => {
   }
 });
 
-module.exports = router;
 
 //UPDATE USER
-router.put("/users/:id", async (req, res) => {
+router.put("/:id", async (req, res) => {
   try {
-    const user = await User.findByIdAndUpdate(
+    const updatedUser = await User.findByIdAndUpdate(
       req.params.id,
       req.body,
       { new: true }
     );
-    res.json(user);
+    res.json(updatedUser);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 });
 
 // DELETE user
-router.delete("/users/:id", async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
     await User.findByIdAndDelete(req.params.id);
     res.json({ message: "User deleted successfully" });
@@ -49,3 +47,5 @@ router.delete("/users/:id", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+module.exports = router;

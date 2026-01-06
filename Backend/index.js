@@ -1,28 +1,26 @@
-const cors = require("cors");
 const express = require("express");
 const mongoose = require("mongoose");
+const cors = require("cors");
 const userRoutes = require("./Routes/userRoutes");
 
+//Initialize app
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
-// Middleware to read JSON
-app.use(express.json());
-
-mongoose.connect("mongodb://127.0.0.1:27017/CodvedaDB")
-  .then(() => console.log("MongoDB Connected"))
-  .catch(err => console.error(err));
-
-app.get("/", (req, res) => {
-  res.send("Codveda Backend is running");
-});
-
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
-
+//Middleware
 app.use(cors());
 app.use(express.json());
 
+//Connect to MongoDB
+mongoose
+  .connect("mongodb://127.0.0.1:27017/CodvedaDB")
+  .then(() => console.log("MongoDB Connected"))
+  .catch(err => console.error("MongoDB Error:", err));
+
 //Using routes
-app.use("/api", userRoutes);
+  app.use("/api/users", userRoutes);
+
+// Start server
+  app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
