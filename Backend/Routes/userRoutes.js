@@ -3,6 +3,7 @@ const User = require("../Models/user");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const authMiddleware = require("../middleware/authMiddleware");
 
 // CREATE user
 router.post("/", async (req, res) => {
@@ -15,8 +16,8 @@ router.post("/", async (req, res) => {
   }
 });
 
-// READ users
-router.get("/", async (req, res) => {
+// READ users - PROTECTED
+router.get("/", authMiddleware, async (req, res) => {
   try {
     const users = await User.find();
     res.json(users);
@@ -50,6 +51,7 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+// REGISTER user
 router.post("/register", async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
@@ -76,6 +78,7 @@ router.post("/register", async (req, res) => {
   }
 });
 
+// LOGIN user
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -101,5 +104,6 @@ router.post("/login", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
 
 module.exports = router;

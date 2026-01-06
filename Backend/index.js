@@ -18,9 +18,9 @@ mongoose
   .catch(err => console.error("MongoDB Error:", err));
 
 //Using routes
-  app.use("/api/users", userRoutes);
+app.use("/api/users", userRoutes);
 
 // Start server
-  app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+app.listen(PORT, () => {
+console.log(`Server running on port ${PORT}`);
 });
