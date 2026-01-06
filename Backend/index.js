@@ -1,3 +1,4 @@
+const cors = require("cors");
 const express = require("express");
 const mongoose = require("mongoose");
 const userRoutes = require("./Routes/userRoutes");
@@ -19,6 +20,9 @@ app.get("/", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+app.use(cors());
+app.use(express.json());
 
 //Using routes
 app.use("/api", userRoutes);
