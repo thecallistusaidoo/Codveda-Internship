@@ -9,12 +9,18 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(
   !!localStorage.getItem("token")
   );
-
-
+  
+  // Logout after edit for security
+  const handleLogout = () => {
+  localStorage.removeItem("token");
+  setIsLoggedIn(false);
+  setUsers([]);
+  };
+  
   // Fetch users on page load
   const fetchUsers = async () => {
-  const token = localStorage.getItem("token");
-
+    const token = localStorage.getItem("token");
+    
   if (!token) return; // do not fetch if not logged in
 
   const res = await fetch("http://localhost:3000/api/users", {
@@ -27,17 +33,19 @@ function App() {
     setUsers([]); // prevent crash
     return;
   }
-
+  
   const data = await res.json();
   setUsers(Array.isArray(data) ? data : []);
   };
-
+  
   useEffect(() => {
     if (isLoggedIn) {
       fetchUsers()
     }
   }, [isLoggedIn]);
+  
 
+  // Handle user deletion
   const handleDelete = async (id) => {
   await fetch(`http://localhost:3000/api/users/${id}`, {
     method: "DELETE",
@@ -46,6 +54,7 @@ function App() {
   setUsers((prev) => prev.filter((user) => user._id !== id));
 };
 
+// Handle user editing
 const handleEdit = async (id, updatedUser) => {
   const response = await fetch(
     `http://localhost:3000/api/users/${id}`,
@@ -61,12 +70,20 @@ const handleEdit = async (id, updatedUser) => {
   setUsers((prev) =>
     prev.map((user) => (user._id === id ? data : user))
   );
+  
+  
 };
 
-
+// Main render
 return (
   <div className="container">
     <h1>Codveda Internship – User Management</h1>
+
+    {isLoggedIn && (
+      <button onClick={handleLogout}>
+        Logout
+      </button>
+    )}
 
     {!isLoggedIn ? (
       <Login onLogin={() => setIsLoggedIn(true)} />
