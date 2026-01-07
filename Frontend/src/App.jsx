@@ -6,10 +6,25 @@ import Login from "./components/Login";
 
 function App() {
   const [users, setUsers] = useState([]);
-  const [currentUser, setCurrentUser] = useState(null);
+  const [currentUserRole, setCurrentUserRole] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(
   !!localStorage.getItem("token")
   );
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      setCurrentUserRole(payload.role);
+      setIsLoggedIn(true);
+    } catch (err) {
+      console.error("Invalid token");
+      handleLogout();
+    }
+  }, []);
+
 
   // Logout after edit for security
   const handleLogout = () => {
@@ -101,15 +116,16 @@ return (
     )}
 
     {!isLoggedIn ? (
-      <Login onLogin={(user) => {
-        setCurrentUser(user);
+      <Login onLogin={(token) => {
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        setCurrentUserRole(payload.role);
         setIsLoggedIn(true);
       }} />
     ) : users.length === 0 ? (
       <p>Loading users or none available...</p>
     ) : (
       <>
-        {currentUser?.role === "admin" && (
+        {currentUserRole === "admin" && (
           <UserForm
             onUserAdded={(newUser) =>
               setUsers((prev) => [...prev, newUser])
@@ -120,7 +136,7 @@ return (
           users={users}
           onDelete={handleDelete}
           onEdit={handleEdit}
-          currentUser={currentUser}
+          currentUserRole={currentUserRole}
         />
       </>
     )}
