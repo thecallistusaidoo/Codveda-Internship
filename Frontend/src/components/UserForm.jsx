@@ -1,38 +1,40 @@
 import { useState } from "react";
 
-function UserForm() {
+function UserForm({ onUserAdded }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [role, setRole] = useState("");
+  const [role, setRole] = useState("user");
+  const [password, setPassword] = useState("");
   const [success, setSuccess] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const response = await fetch("http://localhost:3000/api/users", {
+    const token = localStorage.getItem("token");
+
+    const response = await fetch("http://localhost:3000/api/users/register", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ name, email, role }),
+      body: JSON.stringify({ name, email, password, role }),
     });
 
-    const savedUser = await response.json();
+    const data = await response.json();
 
-    if (response.ok){
-      //Clear inputs
+    if (response.ok) {
       setName("");
       setEmail("");
-      setRole("");
+      setPassword("");
+      setRole("user");
 
-      //After successful save
       setSuccess(true);
-      setTimeout(() => setSuccess(false),2000)
+      setTimeout(() => setSuccess(false), 2000);
 
-      //Tell parent to refresh
-      onUserAdded(savedUser);
-    }else{
-      alert("Failed to add user!");
+      onUserAdded(data);
+    } else {
+      alert(data.error || "Failed to add user");
     }
   };
 
@@ -57,15 +59,21 @@ function UserForm() {
       />
 
       <input
-        type="text"
-        placeholder="Role"
-        value={role}
-        onChange={(e) => setRole(e.target.value)}
+        type="password"
+        placeholder="Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
         required
       />
 
+      <select value={role} onChange={(e) => setRole(e.target.value)}>
+        <option value="user">User</option>
+        <option value="admin">Admin</option>
+      </select>
+
       <button type="submit">Add User</button>
-      *Please refresh after adding user
+
+      {success && <p>User added successfully!</p>}
     </form>
   );
 }

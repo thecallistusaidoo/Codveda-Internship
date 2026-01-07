@@ -4,17 +4,9 @@ const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const authMiddleware = require("../middleware/authMiddleware");
+const roleMiddleware = require("../middleware/roleMiddleware");
 
-// CREATE user
-router.post("/", async (req, res) => {
-  try {
-    const user = new User(req.body);
-    await user.save();
-    res.status(201).json(user);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-});
+
 
 // READ users - PROTECTED
 router.get("/", authMiddleware, async (req, res) => {
@@ -28,7 +20,7 @@ router.get("/", authMiddleware, async (req, res) => {
 
 
 //UPDATE USER
-router.put("/:id", async (req, res) => {
+router.put("/:id", authMiddleware, async (req, res) => {
   try {
     const updatedUser = await User.findByIdAndUpdate(
       req.params.id,
@@ -42,7 +34,7 @@ router.put("/:id", async (req, res) => {
 });
 
 // DELETE user
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authMiddleware, roleMiddleware("admin"), async (req, res) => {
   try {
     await User.findByIdAndDelete(req.params.id);
     res.json({ message: "User deleted successfully" });
@@ -52,7 +44,7 @@ router.delete("/:id", async (req, res) => {
 });
 
 // REGISTER user
-router.post("/register", async (req, res) => {
+router.post("/register", authMiddleware, roleMiddleware("admin"), async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
 
@@ -99,7 +91,20 @@ router.post("/login", async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    res.json({ token});
+    console.log("LOGIN SUCCESS:", {
+      email: user.email,
+      role: user.role,
+    });
+
+
+    res.json({ 
+      token,
+      user: {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role
+    }});
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

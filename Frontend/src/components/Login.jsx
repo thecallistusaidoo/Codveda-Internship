@@ -15,12 +15,14 @@ function Login({ onLogin }) {
 
     const data = await res.json();
 
-    if (data.token) {
+    if (data.token && data.user) {
       localStorage.setItem("token", data.token);
-      onLogin();
+      onLogin(data.user);
     } else {
       alert(data.message || "Login failed");
     }
+
+    onLogin(data.user);
   };
 
   return (

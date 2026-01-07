@@ -6,10 +6,11 @@ import Login from "./components/Login";
 
 function App() {
   const [users, setUsers] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(
   !!localStorage.getItem("token")
   );
-  
+
   // Logout after edit for security
   const handleLogout = () => {
   localStorage.removeItem("token");
@@ -45,34 +46,48 @@ function App() {
   }, [isLoggedIn]);
   
 
-  // Handle user deletion
+ // Handle user deletion (ADMIN ONLY)
   const handleDelete = async (id) => {
-  await fetch(`http://localhost:3000/api/users/${id}`, {
-    method: "DELETE",
-  });
+    const token = localStorage.getItem("token");
 
-  setUsers((prev) => prev.filter((user) => user._id !== id));
-};
-
-// Handle user editing
-const handleEdit = async (id, updatedUser) => {
-  const response = await fetch(
+    const response = await fetch(
     `http://localhost:3000/api/users/${id}`,
     {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updatedUser),
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     }
   );
 
-  const data = await response.json();
+  if (!response.ok) {
+    const error = await response.json();
+    alert(error.message || "Not authorized");
+    return;
+  }
 
-  setUsers((prev) =>
-    prev.map((user) => (user._id === id ? data : user))
-  );
-  
-  
-};
+  setUsers((prev) => prev.filter((user) => user._id !== id));
+  };
+
+
+  // Handle user editing
+  const handleEdit = async (id, updatedUser) => {
+    const response = await fetch(
+      `http://localhost:3000/api/users/${id}`,
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedUser),
+      }
+    );
+
+    const data = await response.json();
+
+    setUsers((prev) =>
+      prev.map((user) => (user._id === id ? data : user))
+    );
+  };
+
 
 // Main render
 return (
@@ -86,20 +101,26 @@ return (
     )}
 
     {!isLoggedIn ? (
-      <Login onLogin={() => setIsLoggedIn(true)} />
+      <Login onLogin={(user) => {
+        setCurrentUser(user);
+        setIsLoggedIn(true);
+      }} />
     ) : users.length === 0 ? (
       <p>Loading users or none available...</p>
     ) : (
       <>
-        <UserForm
-          onUserAdded={(newUser) =>
-            setUsers((prev) => [...prev, newUser])
-          }
-        />
+        {currentUser?.role === "admin" && (
+          <UserForm
+            onUserAdded={(newUser) =>
+              setUsers((prev) => [...prev, newUser])
+            }
+          />
+        )}
         <UserList
           users={users}
           onDelete={handleDelete}
           onEdit={handleEdit}
+          currentUser={currentUser}
         />
       </>
     )}
