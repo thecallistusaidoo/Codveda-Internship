@@ -2,17 +2,41 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import UserForm from "./components/UserForm";
 import UserList from "./components/UserList";
+import Login from "./components/Login";
 
 function App() {
   const [users, setUsers] = useState([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(
+  !!localStorage.getItem("token")
+  );
+
 
   // Fetch users on page load
+  const fetchUsers = async () => {
+  const token = localStorage.getItem("token");
+
+  if (!token) return; // do not fetch if not logged in
+
+  const res = await fetch("http://localhost:3000/api/users", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) {
+    setUsers([]); // prevent crash
+    return;
+  }
+
+  const data = await res.json();
+  setUsers(Array.isArray(data) ? data : []);
+  };
+
   useEffect(() => {
-    fetch("http://localhost:3000/api/users")
-      .then((res) => res.json())
-      .then((data) => setUsers(data))
-      .catch((err) => console.error(err));
-  }, []);
+    if (isLoggedIn) {
+      fetchUsers()
+    }
+  }, [isLoggedIn]);
 
   const handleDelete = async (id) => {
   await fetch(`http://localhost:3000/api/users/${id}`, {
@@ -40,16 +64,31 @@ const handleEdit = async (id, updatedUser) => {
 };
 
 
-  return (
-    <div className="container">
-      <h1>Codveda Internship – User Management</h1>
+return (
+  <div className="container">
+    <h1>Codveda Internship – User Management</h1>
 
-      <UserForm onUserAdded={(newUser) => setUsers((prev) => [...prev, newUser])} />
-      <UserList 
-      users={users} onDelete={handleDelete} onEdit={handleEdit} 
-      />
-    </div>
-  );
+    {!isLoggedIn ? (
+      <Login onLogin={() => setIsLoggedIn(true)} />
+    ) : users.length === 0 ? (
+      <p>Loading users or none available...</p>
+    ) : (
+      <>
+        <UserForm
+          onUserAdded={(newUser) =>
+            setUsers((prev) => [...prev, newUser])
+          }
+        />
+        <UserList
+          users={users}
+          onDelete={handleDelete}
+          onEdit={handleEdit}
+        />
+      </>
+    )}
+  </div>
+);
+
 }
 
 export default App;
