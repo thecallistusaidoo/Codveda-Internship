@@ -20,7 +20,7 @@ router.get("/", authMiddleware, async (req, res) => {
 
 
 //UPDATE USER
-router.put("/:id", authMiddleware, async (req, res) => {
+router.put("/:id", authMiddleware, roleMiddleware("admin"), async (req, res) => {
   try {
     const updatedUser = await User.findByIdAndUpdate(
       req.params.id,

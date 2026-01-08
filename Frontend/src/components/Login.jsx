@@ -21,8 +21,6 @@ function Login({ onLogin }) {
     } else {
       alert(data.message || "Login failed");
     }
-
-    onLogin(data.token);
   };
 
   return (

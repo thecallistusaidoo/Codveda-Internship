@@ -11,6 +11,7 @@ function UserList({ users, onDelete, onEdit, currentUserRole }) {
             <li key={user._id} style={{ marginBottom: "10px" }}>
               <input
                 value={user.name}
+                disabled={currentUserRole !== "admin"}
                 onChange={(e) =>
                   onEdit(user._id, { ...user, name: e.target.value })
                 }
@@ -18,6 +19,7 @@ function UserList({ users, onDelete, onEdit, currentUserRole }) {
 
               <input
                 value={user.email}
+                disabled={currentUserRole !== "admin"}
                 onChange={(e) =>
                   onEdit(user._id, { ...user, email: e.target.value })
                 }
@@ -25,6 +27,7 @@ function UserList({ users, onDelete, onEdit, currentUserRole }) {
 
               <input
                 value={user.role}
+                disabled={currentUserRole !== "admin"}
                 onChange={(e) =>
                   onEdit(user._id, { ...user, role: e.target.value })
                 }
