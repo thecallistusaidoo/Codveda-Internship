@@ -31,6 +31,7 @@ function App() {
   localStorage.removeItem("token");
   setIsLoggedIn(false);
   setUsers([]);
+  setCurrentUserRole(null);
   };
   
   // Fetch users on page load
@@ -87,21 +88,33 @@ function App() {
 
   // Handle user editing
   const handleEdit = async (id, updatedUser) => {
-    const response = await fetch(
-      `http://localhost:3000/api/users/${id}`,
-      {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedUser),
-      }
-    );
+  const token = localStorage.getItem("token");
 
-    const data = await response.json();
+  const response = await fetch(
+    `http://localhost:3000/api/users/${id}`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(updatedUser),
+    }
+  );
 
-    setUsers((prev) =>
-      prev.map((user) => (user._id === id ? data : user))
-    );
+  if (!response.ok) {
+    const err = await response.json();
+    alert(err.message || "Update failed");
+    return;
+  }
+
+  const data = await response.json();
+
+  setUsers((prev) =>
+    prev.map((user) => (user._id === id ? data : user))
+  );
   };
+
 
 
 // Main render
@@ -133,8 +146,7 @@ return (
       <>
         {currentUserRole === "admin" && (
           <UserForm
-            onUserAdded={(newUser) =>
-              setUsers((prev) => [...prev, newUser])
+            onUserAdded={() => fetchUsers()
             }
           />
         )}
