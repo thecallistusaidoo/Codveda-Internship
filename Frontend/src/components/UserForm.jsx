@@ -73,7 +73,7 @@ function UserForm({ onUserAdded }) {
 
       <button type="submit">Add User</button>
 
-      {success && <p>User added successfully!</p>}
+      {success && <p className="success">User added successfully!</p>}
     </form>
   );
 }

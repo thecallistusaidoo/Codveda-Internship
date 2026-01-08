@@ -110,7 +110,7 @@ return (
     <h1>Codveda Internship – User Management</h1>
 
     {isLoggedIn && (
-      <button onClick={handleLogout}>
+      <button className="logout-btn" onClick={handleLogout}>
         Logout
       </button>
     )}

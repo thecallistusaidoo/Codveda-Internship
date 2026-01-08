@@ -1,6 +1,6 @@
 function UserList({ users, onDelete, onEdit, currentUserRole }) {
   return (
-    <div>
+    <div className="user-list">
       <h2>User List</h2>
 
       {users.length === 0 ? (

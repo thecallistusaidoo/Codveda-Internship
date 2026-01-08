@@ -1,36 +1,135 @@
-.container {
-  max-width: 100%;
-  display: flex;
-  flex-direction: column;
-  margin: 40px auto;
-  font-family: Arial, Helvetica, sans-serif;
-  justify-content: center;
+/* Reset & base */
+* {
+  box-sizing: border-box;
 }
 
+body {
+  margin: 0;
+  padding: 0;
+  background: #f4f6f8;
+  font-family: Arial, Helvetica, sans-serif;
+}
 
+/* App container */
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 20px;
+}
+
+/* Headings */
 h1 {
   text-align: center;
-  padding-left: 70px;
-}
-h2 {
-  text-align: center;
-}
-form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
   margin-bottom: 30px;
+  font-size: 28px;
+  color: #222;
+}
+
+h2 {
+  margin-bottom: 15px;
+  color: #333;
+}
+
+/* Card style for forms & lists */
+form,
+.user-card {
+  background: #ffffff;
+  width: 100%;
+  max-width: 420px;
+  padding: 25px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  margin-bottom: 25px;
+}
+
+/* Inputs & select */
+input,
+select {
+  width: 100%;
+  padding: 10px;
+  font-size: 15px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+input:disabled {
+  background: #f0f0f0;
+  cursor: not-allowed;
+}
+
+/* Buttons */
+button {
+  width: 100%;
+  padding: 10px;
+  background: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+button:hover {
+  background: #125ea8;
+}
+
+/* Logout button */
+.logout-btn {
+  max-width: 420px;
+  margin-bottom: 20px;
+  background: #d32f2f;
+}
+
+.logout-btn:hover {
+  background: #b71c1c;
+}
+
+/* User list */
+.user-list {
+  width: 100%;
+  max-width: 700px;
+}
+
+.user-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.user-list li {
+  background: #ffffff;
+  padding: 15px;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  margin-bottom: 12px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr auto;
+  gap: 10px;
   align-items: center;
 }
 
-input {
-  padding: 8px;
-  font-size: 16px;
-  width: 80%;
+/* Delete button */
+.user-list button {
+  background: #e53935;
 }
 
-button {
-  padding: 10px;
-  cursor: pointer;
-  width: 80%;
+.user-list button:hover {
+  background: #c62828;
+}
+
+/* Success message */
+.success {
+  color: green;
+  text-align: center;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+/* Loading / empty text */
+p {
+  color: #555;
+  text-align: center;
 }
