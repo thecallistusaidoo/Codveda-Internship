@@ -109,6 +109,12 @@ return (
   <div className="container">
     <h1>Codveda Internship – User Management</h1>
 
+    {currentUserRole && (
+      <span className={`role-badge ${currentUserRole}`}>
+        {currentUserRole.toUpperCase()}
+      </span>
+    )}
+
     {isLoggedIn && (
       <button className="logout-btn" onClick={handleLogout}>
         Logout

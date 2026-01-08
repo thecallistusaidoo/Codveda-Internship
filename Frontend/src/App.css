@@ -133,3 +133,49 @@ p {
   color: #555;
   text-align: center;
 }
+
+/* Role badge */
+.role-badge {
+  margin-bottom: 20px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: bold;
+  color: white;
+}
+
+.role-badge.admin {
+  background: #2e7d32;
+}
+
+.role-badge.user {
+  background: #616161;
+}
+
+input:disabled,
+select:disabled {
+  background: #f5f5f5;
+  color: #777;
+  border: 1px dashed #ccc;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .user-list li {
+    grid-template-columns: 1fr;
+  }
+
+  .user-list input,
+  .user-list button {
+    width: 100%;
+  }
+
+  form,
+  .user-card {
+    padding: 20px;
+  }
+
+  h1 {
+    font-size: 22px;
+  }
+}
